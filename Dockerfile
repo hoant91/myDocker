@@ -1,21 +1,19 @@
 FROM ubuntu:16.04
+FROM ruby:2.3
+ 
+RUN apt-get update && apt-get install -y \
+  build-essential \
+  nodejs
+ 
+RUN mkdir -p /app
+WORKDIR /app
+ 
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler && bundle install --jobs 20 --retry 5
+ 
+COPY . ./
+ 
+EXPOSE 3000
+ 
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
 
-RUN DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update
-
-RUN apt-get install -y nginx
-
-RUN echo "mysql-server mysql-server/root_password password root" | debconf-set-selections \
-    && echo "mysql-server mysql-server/root_password_again password root" | debconf-set-selections \
-    && apt-get install -y mysql-server
-
-WORKDIR /venv
-
-COPY start.sh /venv
-
-RUN chmod a+x /venv/*
-
-ENTRYPOINT ["/venv/start.sh"]
-
-EXPOSE 80
