@@ -18,4 +18,4 @@ RUN chmod a+x /venv/*
 
 ENTRYPOINT ["/venv/start.sh"]
 
-EXPOSE 8080
+EXPOSE 80
